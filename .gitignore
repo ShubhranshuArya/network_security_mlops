@@ -2,6 +2,7 @@
 .venv/
 env/
 venv/
+Artifacts/
 
 # Environment variables
 .env

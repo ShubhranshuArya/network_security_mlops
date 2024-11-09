@@ -5,9 +5,7 @@ import os
 import sys
 
 load_dotenv()
-MONGO_DB_URI = os.getenv("MONGO_DB_URI")
-
-print(MONGO_DB_URI)
+MONGO_DB_URL = os.getenv("MONGO_DB_URL")
 
 import certifi
 
@@ -45,12 +43,11 @@ class NetworkDataExtract:
             self.database = database
             self.collections = collections
 
-            self.mongo_client = pymongo.MongoClient(MONGO_DB_URI)
+            self.mongo_client = pymongo.MongoClient(MONGO_DB_URL)
             self.database = self.mongo_client[self.database]
             self.collection = self.database[self.collections]
 
             self.collection.insert_many(self.records)
-            print("Length of records: ", len(self.records))
 
         except Exception as e:
             raise NetworkSecurityException(e, sys)
