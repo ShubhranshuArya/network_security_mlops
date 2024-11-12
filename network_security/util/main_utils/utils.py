@@ -1,8 +1,11 @@
 import os
+import pickle
 import sys
+import numpy as np
 import yaml
 
 from network_security.exception.exception import NetworkSecurityException
+from network_security.logging.logger import logging
 
 
 def read_yaml_file(file_path) -> dict:
@@ -43,5 +46,41 @@ def write_yaml_file(
         with open(file_path, "w") as file:
             return yaml.dump(content, file)
 
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)
+
+
+def save_numpy_array_data(file_path: str, array: np.ndarray):
+    """
+    This function saves a numpy array into a file.
+
+    :param file_path: The path to the file where the numpy array will be saved.
+    :param array: The numpy array to be saved.
+    :return: None
+    """
+    try:
+        dir_path = os.path.dirname(file_path)
+        os.makedirs(dir_path, exist_ok=True)
+        with open(file_path, "wb") as file_obj:
+            np.save(file_obj, array)
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)
+
+
+def save_object(file_path: str, obj: object):
+    """
+    This function saves an object into a file.
+
+    :param file_path: The path to the file where the object will be saved.
+    :param obj: The object to be saved.
+    :return: None
+    """
+    try:
+        logging.info(f"Entered the save_object method of MainUtils class")
+        dir_path = os.path.dirname(file_path)
+        os.makedirs(dir_path, exist_ok=True)
+        with open(file_path, "wb") as file_obj:
+            pickle.dump(obj, file_obj)
+        logging.info(f"Exited the save_object method of MainUtils class")
     except Exception as e:
         raise NetworkSecurityException(e, sys)

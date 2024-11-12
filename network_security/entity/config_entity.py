@@ -4,6 +4,12 @@ from datetime import datetime
 
 
 class TrainingPipelineConfig:
+    """
+    This class represents the configuration for the training pipeline.
+    It includes properties such as pipeline name, artifact directory, and timestamp.
+    The timestamp is used to create a unique directory for each pipeline run.
+    """
+
     def __init__(self, timestamp=datetime.now()):
         timestamp = timestamp.strftime("%m_%d_%Y_%H_%M_%S")
         self.pipeline_name: str = training_pipeline.PIPELINE_NAME
@@ -13,6 +19,13 @@ class TrainingPipelineConfig:
 
 
 class DataIngestionConfig:
+    """
+    This class represents the configuration for data ingestion in the training pipeline.
+    It includes properties such as data ingestion directory, feature store file path, training file path,
+    testing file path, train-test split ratio, collection name, and database name.
+    These properties are used to manage the data ingestion process in the pipeline.
+    """
+
     def __init__(self, training_pipeline_config: TrainingPipelineConfig):
         self.data_ingestion_dir: str = os.path.join(
             training_pipeline_config.artifact_dir,
@@ -41,6 +54,13 @@ class DataIngestionConfig:
 
 
 class DataValidationConfig:
+    """
+    This class represents the configuration for data validation in the training pipeline.
+    It includes properties such as data validation directory, valid data directory, invalid data directory,
+    valid and invalid train and test file paths, and drift report file path.
+    These properties are used to manage the data validation process in the pipeline.
+    """
+
     def __init__(self, training_pipeline_config: TrainingPipelineConfig):
         self.data_validation_dir: str = os.path.join(
             training_pipeline_config.artifact_dir,
@@ -75,4 +95,34 @@ class DataValidationConfig:
             self.data_validation_dir,
             training_pipeline.DATA_VALIDATION_DRIFT_REPORT_DIR,
             training_pipeline.DATA_VALIDATION_DRIFT_REPORT_FILE_NAME,
+        )
+
+
+class DataTransformationConfig:
+    """
+    This class represents the configuration for data transformation in the training pipeline.
+    It includes properties such as data transformation directory, transformed train and test file paths,
+    and transformed object file path.
+    These properties are used to manage the data transformation process in the pipeline.
+    """
+
+    def __init__(self, training_pipeline_config: TrainingPipelineConfig):
+        self.data_transformation_dir: str = os.path.join(
+            training_pipeline_config.artifact_dir,
+            training_pipeline.DATA_TRANSFORMATION_DIR_NAME,
+        )
+        self.transformed_train_file_path: str = os.path.join(
+            self.data_transformation_dir,
+            training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,
+            training_pipeline.TRAIN_FILE_NAME.replace("csv", "npy"),
+        )
+        self.transformed_test_file_path: str = os.path.join(
+            self.data_transformation_dir,
+            training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,
+            training_pipeline.TEST_FILE_NAME.replace("csv", "npy"),
+        )
+        self.transformed_object_file_path: str = os.path.join(
+            self.data_transformation_dir,
+            training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR,
+            training_pipeline.PREPROCESSING_OBJECT_FILE_NAME,
         )
