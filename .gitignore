@@ -3,6 +3,7 @@
 env/
 venv/
 Artifacts/
+mlruns/
 
 # Environment variables
 .env
