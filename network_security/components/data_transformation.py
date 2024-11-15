@@ -121,8 +121,8 @@ class DataTransformation:
 
             # Save the preprocessor object
             save_object(
-                self.data_transformation_config.transformed_object_file_path,
-                preprocessor_object,
+                file_path="final_models/model.pkl",
+                obj=preprocessor_object,
             )
 
             save_object(

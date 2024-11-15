@@ -2,8 +2,10 @@ import os
 import sys
 from dotenv import load_dotenv
 import certifi
-from fastapi import FastAPI
+from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
+import pandas as pd
 import pymongo
 
 from fastapi.responses import Response
@@ -16,6 +18,8 @@ from network_security.constants.training_pipeline import (
 )
 from network_security.exception.exception import NetworkSecurityException
 from network_security.pipeline.training_pipeline import TrainingPipeline
+from network_security.util.main_utils.utils import load_object
+from network_security.util.ml_utils.model.estimator import NetworkModel
 
 ca = certifi.where()
 load_dotenv()
@@ -37,6 +41,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+templates = Jinja2Templates(directory="./templates")
+
 
 @app.get("/", tags=["Authentication"])
 async def index():
@@ -50,6 +56,34 @@ async def train_route():
         train_pipeline.run_pipeline()
 
         return Response("Training successful !!")
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)
+
+
+@app.post("/predict")
+async def predict_route(
+    request: Request,
+    file: UploadFile = File(...),
+):
+    try:
+        df = pd.read_csv(file.file)
+        preprocessor = load_object("final_models/preprocessor.pkl")
+        model = load_object("final_models/model.pkl")
+        network_model = NetworkModel(preprocessor, model)
+        y_pred = network_model.predict(df)
+        df["prediction"] = y_pred
+
+        df.to_csv("prediction_output/output.csv")
+        table_html = df.to_html(classes="table table-striped")
+
+        return templates.TemplateResponse(
+            "table.html",
+            {
+                "request": request,
+                "table": table_html,
+            },
+        )
+
     except Exception as e:
         raise NetworkSecurityException(e, sys)
 
