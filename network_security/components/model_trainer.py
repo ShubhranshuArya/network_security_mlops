@@ -26,6 +26,14 @@ from network_security.util.ml_utils.metric.classification_metric import (
 )
 from network_security.util.ml_utils.model.estimator import NetworkModel
 
+import dagshub
+
+dagshub.init(
+    repo_owner="ShubhranshuArya",
+    repo_name="network_security_mlops",
+    mlflow=True,
+)
+
 
 class ModelTrainer:
     def __init__(
@@ -46,7 +54,7 @@ class ModelTrainer:
                 precision_score = classification_metric.precision_score
                 recall_score = classification_metric.recall_score
 
-                mlflow.log_params(
+                mlflow.log_metrics(
                     {
                         "f1_score": f1_score,
                         "precision_score": precision_score,
@@ -165,6 +173,11 @@ class ModelTrainer:
             save_object(
                 file_path=self.model_trainer_config.trained_model_file_path,
                 obj=network_model,
+            )
+
+            save_object(
+                file_path="final_models/model.pkl",
+                obj=best_model,
             )
 
             model_trainer_artifact = ModelTrainerArtifact(
