@@ -15,7 +15,7 @@ import pandas as pd
 import numpy as np
 import pymongo
 from network_security.exception.exception import NetworkSecurityException
-from network_security.logging import logger
+from network_security.logging.logger import logging
 
 
 class NetworkDataExtract:
