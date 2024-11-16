@@ -4,6 +4,7 @@ env/
 venv/
 Artifacts/
 mlruns/
+final_models/
 
 # Environment variables
 .env
