@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 import pandas as pd
 import pymongo
-
+from uvicorn import run as app_run
 from fastapi.responses import Response
 
 from starlette.responses import RedirectResponse
