@@ -15,6 +15,7 @@ class TrainingPipelineConfig:
         self.pipeline_name: str = training_pipeline.PIPELINE_NAME
         self.artifact_name: str = training_pipeline.ARTIFACT_DIR
         self.artifact_dir: str = os.path.join(self.artifact_name, timestamp)
+        self.model_dir: str = os.path.join("final_models")
         self.timestamp: str = timestamp
 
 
@@ -129,7 +130,15 @@ class DataTransformationConfig:
 
 
 class ModelTrainerConfig:
+    """
+    This class represents the configuration for the model trainer in the training pipeline.
+    It includes properties such as model trainer directory, trained model file path,
+    expected accuracy, and overfitting/underfitting threshold.
+    These properties are used to manage the model training process in the pipeline.
+    """
+
     def __init__(self, training_pipeline_config: TrainingPipelineConfig):
+
         self.model_trainer_dir: str = os.path.join(
             training_pipeline_config.artifact_dir,
             training_pipeline.MODEL_TRAINER_DIR_NAME,

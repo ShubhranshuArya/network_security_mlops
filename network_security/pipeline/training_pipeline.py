@@ -1,7 +1,9 @@
 import sys
+from network_security.cloud.s3_syncer import S3Sync
 from network_security.components.data_transformation import DataTransformation
 from network_security.components.data_validation import DataValidation
 from network_security.components.model_trainer import ModelTrainer
+from network_security.constants.training_pipeline import TRAINING_BUCKET_NAME
 from network_security.entity.artifact_entity import (
     DataIngestionArtifact,
     DataTransformationArtifact,
@@ -23,6 +25,7 @@ from network_security.exception.exception import NetworkSecurityException
 class TrainingPipeline:
     def __init__(self):
         self.training_pipeline_config = TrainingPipelineConfig()
+        self.s3sync = S3Sync()
 
     def start_data_ingestion(self) -> DataIngestionArtifact:
         """
@@ -160,7 +163,48 @@ class TrainingPipeline:
         except Exception as e:
             raise NetworkSecurityException(e, sys)
 
+    def sync_artifact_dir_to_s3(self):
+        """
+        Syncs the artifact directory to an S3 bucket.
+
+        This method synchronizes the artifact directory generated during the training pipeline
+        process to a specified S3 bucket. It constructs the S3 bucket URL based on the training pipeline
+        configuration and uses the S3Sync utility to perform the synchronization.
+        """
+        try:
+            aws_bucket_url = f"s3://{TRAINING_BUCKET_NAME}/artifact/{self.training_pipeline_config.timestamp}"
+            self.s3sync.sync_folder_to_s3(
+                folder=self.training_pipeline_config.artifact_dir,
+                aws_bucket_url=aws_bucket_url,
+            )
+        except Exception as e:
+            raise NetworkSecurityException(e, sys)
+
+    def sync_saved_model_dir_to_s3(self):
+        """
+        Syncs the saved model directory to an S3 bucket.
+
+        This method synchronizes the saved model directory generated during the model training process
+        to a specified S3 bucket. It constructs the S3 bucket URL based on the training pipeline
+        configuration and uses the S3Sync utility to perform the synchronization.
+        """
+        try:
+            aws_bucket_url = f"s3://{TRAINING_BUCKET_NAME}/final_model/{self.training_pipeline_config.timestamp}"
+            self.s3sync.sync_folder_to_s3(
+                folder=self.training_pipeline_config.model_dir,
+                aws_bucket_url=aws_bucket_url,
+            )
+        except Exception as e:
+            raise NetworkSecurityException(e, sys)
+
     def run_pipeline(self):
+        """
+        Executes the entire training pipeline process.
+
+        This method orchestrates the entire training pipeline process,
+        starting from data ingestion to model training and finally syncing the artifacts to an S3 bucket.
+        It logs the progress of each step and raises an exception if any step fails.
+        """
         try:
             data_ingestion_artifact = self.start_data_ingestion()
             data_validation_artifact = self.start_data_validation(
@@ -172,6 +216,10 @@ class TrainingPipeline:
             model_trainer_artifact = self.start_model_trainer(
                 data_transformation_artifact
             )
+
+            self.sync_artifact_dir_to_s3()
+            self.sync_saved_model_dir_to_s3()
+
             return model_trainer_artifact
         except Exception as e:
             raise NetworkSecurityException(e, sys)
