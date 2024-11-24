@@ -6,7 +6,7 @@
 ## 📚 Table of Contents
 1. [Project Overview](#-project-overview)
 2. [Goals Achieved](#-goals-achieved)
-3. [Project Methodology](#-project-methodology)
+3. [Project Methodology](#%EF%B8%8F-project-methodology)
    - [Data Ingestion](#data-ingestion)
    - [Data Validation](#data-validation)
    - [Data Transformation](#data-transformation)
@@ -16,8 +16,8 @@
 5. [Contribution](#-contribution)
 6. [Project Outro](#-project-outro)
 
-## 🚀 Project Overview
-The **Network Security Model Prediction** project aims to detect phishing attempts in network traffic using machine learning techniques. By leveraging various data processing and modeling strategies, this project provides a robust solution for identifying malicious URLs and enhancing network security.
+## 🚩 Problem
+The web is filled with malicious traffic which leads to numerous kinds of phishing attempts. This project aims to understand and detect phishing attempts in network traffic using various machine learning algorithms. By leveraging various data processing and modeling strategies, this project provides a robust solution for identifying malicious URLs and enhancing network security.
 
 ## 🎯 Goals Achieved
 - Developed a comprehensive pipeline for data ingestion, validation, transformation, and model training.
